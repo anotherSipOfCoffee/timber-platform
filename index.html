@@ -1,320 +1,589 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="A parametric timber construction platform — kit-of-parts, CNC-manufactured, conceptual and pre-engineering stage. Independent R&D.">
-<title>System 0.1 — A Parametric Timber Construction Platform</title>
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500&family=Space+Mono:wght@400;700&display=swap");
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" id="meta-description" content="A calm, modular timber building system in development — based on a small family of CNC-made parts, clear interfaces and tested rules.">
+  <title id="page-title">OpenBay — a timber building system</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f4f0e8;
+      --paper-2: #ebe5d9;
+      --ink: #1c1c18;
+      --muted: #777269;
+      --line: #d2cbc0;
+      --wood: #8c684a;
+      --wood-soft: #bca389;
+      --sage: #87917d;
+      --sage-deep: #656f60;
+      --white: #f4f0e8;
+      --diagram: #151512;
+      --max: 1240px;
+      --serif: "Instrument Serif", Georgia, serif;
+      --sans: "DM Sans", system-ui, sans-serif;
+    }
 
-:root{
-  --char: #1B1712;
-  --char-2: #241F18;
-  --birch: #EDE6D6;
-  --birch-dim: #A79E8C;
-  --signal: #F5B700;
-  --line: #45392A;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-body: "Work Sans", sans-serif;
-  --font-mono: "Space Mono", monospace;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-body{
-  margin:0;
-  background:var(--char);
-  color:var(--birch);
-  font-family:var(--font-body);
-  font-size:1.05rem;
-  line-height:1.65;
-}
-a{color:var(--signal);text-decoration-thickness:1.5px;text-underline-offset:3px}
-a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
-.wrap{max-width:760px;margin:0 auto;padding:0 1.5rem}
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      line-height: 1.55;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    :focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 4px; }
 
-/* status tag */
-.status-tag{
-  display:inline-flex;align-items:center;gap:.5rem;
-  font-family:var(--font-mono);font-size:.78rem;
-  color:var(--birch-dim);
-  border:1px solid var(--line);
-  padding:.4rem .8rem;
-  margin-bottom:2rem;
-}
-.status-tag .dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--signal)}
+    .page { width: min(100% - 36px, var(--max)); margin: 0 auto; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--paper);
+    }
+    .brand { text-decoration: none; display: inline-flex; align-items: baseline; gap: 10px; }
+    .brand-mark { font-size: 17px; font-weight: 600; letter-spacing: -.03em; }
+    .brand-sub { font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+    .nav { display: flex; gap: 22px; align-items: center; }
+    .nav a { text-decoration: none; font-size: 13px; color: var(--muted); }
+    .nav a:hover { color: var(--ink); }
+    .lang { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; }
+    .lang button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 2px 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .lang button.active { color: var(--ink); font-weight: 600; }
+    .lang .slash { color: #b6b0a4; font-size: 12px; }
 
-/* hero */
-.hero{padding:5rem 0 4rem}
-.hero h1{
-  font-family:var(--font-display);font-weight:700;
-  font-size:clamp(2.3rem,6.5vw,3.4rem);
-  line-height:1.08;margin:0 0 1.5rem;letter-spacing:-.01em;
-  max-width:14ch;
-}
-.hero .hypothesis{
-  font-size:1.2rem;color:var(--birch);max-width:38ch;margin:0 0 2rem;
-}
-.hero .meta{font-family:var(--font-mono);font-size:.8rem;color:var(--birch-dim)}
-.scroll-cue{margin-top:3rem;font-family:var(--font-mono);font-size:.78rem;color:var(--birch-dim)}
+    .hero {
+      min-height: min(850px, 88vh);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(36px, 7vw, 96px);
+      align-items: center;
+      padding: clamp(72px, 11vw, 140px) 0 110px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      font-size: 10px;
+      margin-bottom: 24px;
+    }
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); }
+    h1, h2, h3 { font-weight: 400; letter-spacing: -.035em; margin: 0; }
+    h1 { font-family: var(--serif); font-size: clamp(60px, 8vw, 118px); line-height: .9; max-width: 8.4ch; }
+    .hero-lede { font-size: clamp(18px, 2vw, 23px); max-width: 33ch; margin: 30px 0 0; color: #4d493f; }
+    .hero-note { margin-top: 32px; color: var(--muted); font-size: 12px; max-width: 38ch; }
+    .hero-note strong { color: var(--ink); font-weight: 500; }
+    .hero-visual {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+    }
+    .hero-frame {
+      width: min(100%, 610px);
+      aspect-ratio: 1 / 1.08;
+      position: relative;
+    }
+    .hero-frame::before { display:none; }
+    .hero-frame svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    .hero-caption {
+      position: absolute;
+      right: 2%;
+      bottom: 0;
+      width: 185px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
 
-/* sections */
-section.spread{padding:4rem 0;border-top:1px solid var(--line)}
-.snum{
-  font-family:var(--font-mono);font-size:.85rem;color:var(--signal);
-  display:block;margin-bottom:.8rem;
-}
-.spread h2{
-  font-family:var(--font-display);font-weight:600;
-  font-size:clamp(1.6rem,4vw,2.1rem);margin:0 0 1.2rem;letter-spacing:-.005em;
-}
-.spread p{max-width:62ch;color:var(--birch);margin:0 0 1.1rem}
-.spread p.dim{color:var(--birch-dim);font-size:.95rem}
-.diagram{margin:2rem 0;overflow-x:auto}
-.diagram svg{width:100%;height:auto;display:block;min-width:480px}
+    .section { padding: 130px 0; border-top: 1px solid var(--line); }
+    .section--tight { padding: 95px 0; }
+    .section-grid { display: grid; grid-template-columns: 160px 1fr; gap: 40px; }
+    .section-index { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding-top: 8px; }
+    .section-title { font-size: clamp(40px, 5vw, 66px); line-height: 1.0; max-width: 12ch; margin-bottom: 28px; }
+    .section-title .accent { font-family: var(--serif); font-style: normal; font-weight: 400; }
+    .lead { font-size: 21px; line-height: 1.42; max-width: 40ch; color: #4d493f; margin: 0; }
+    .copy { max-width: 60ch; color: #625d53; font-size: 15px; }
+    .copy + .copy { margin-top: 17px; }
+    .muted { color: var(--muted); }
 
-/* part row labels */
-.part-label{font-family:var(--font-mono);font-size:.68rem;fill:var(--birch-dim)}
-.part-code{font-family:var(--font-mono);font-size:.72rem;fill:var(--signal);font-weight:700}
+    .principles { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .principle { background: var(--paper); padding: 30px; min-height: 240px; }
+    .principle-no { font-size: 11px; color: var(--muted); }
+    .principle h3 { font-size: 25px; margin-top: 52px; margin-bottom: 12px; }
+    .principle p { color: var(--muted); font-size: 14px; max-width: 30ch; margin: 0; }
 
-/* validation ladder */
-.ladder{margin:2rem 0}
-.ladder-row{
-  display:grid;grid-template-columns:3.5rem 1fr;gap:1rem;
-  padding:1rem 0;border-top:1px solid var(--line);align-items:baseline;
-}
-.ladder-row:first-child{border-top:none}
-.ladder-row.current{background:rgba(245,183,0,.06)}
-.lver{font-family:var(--font-mono);font-weight:700;color:var(--birch)}
-.ladder-row.current .lver{color:var(--signal)}
-.lclaim{font-weight:500;margin-bottom:.2rem}
-.lexcl{color:var(--birch-dim);font-size:.88rem}
+    .system-visual { margin-top: 65px; border: 0; background: transparent; padding: 0; }
+    .system-visual svg { width: 100%; height: auto; display: block; }
+    .visual-caption { display: flex; justify-content: space-between; gap: 30px; padding-top: 15px; color: var(--muted); font-size: 11px; }
+    .line-art, .line-art svg { color: var(--diagram); }
+    .line-art svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .line-art * { vector-effect: non-scaling-stroke; }
+    .hero-frame, .system-visual, .connection-card { overflow: visible; }
+    .hero-frame { width: min(100%, 630px); }
+    .visual-caption { border-top: 0; }
 
-/* roadmap */
-.roadmap{margin:2.5rem 0 1rem}
-.rline{position:relative;height:2px;background:var(--line);margin:0 0 1.2rem}
-.rmarker{position:absolute;top:50%;transform:translate(-50%,-50%);width:.7rem;height:.7rem;border-radius:50%;background:var(--char-2);border:2px solid var(--birch-dim)}
-.rmarker.done{background:var(--birch-dim);border-color:var(--birch-dim)}
-.rmarker.current{background:var(--signal);border-color:var(--signal);width:.9rem;height:.9rem}
-.rlabels{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.68rem;color:var(--birch-dim);gap:.5rem}
-.rlabels span{flex:1;text-align:center}
-.rlabels span.current{color:var(--signal);font-weight:700}
 
-/* closing rule */
-.rule-close{padding:5rem 0 4rem;border-top:1px solid var(--line);text-align:left}
-.rule-close .tag{font-family:var(--font-mono);font-size:.78rem;color:var(--birch-dim);margin-bottom:1rem;display:block}
-.rule-close blockquote{
-  margin:0 0 2.5rem;font-family:var(--font-display);font-weight:600;
-  font-size:clamp(1.5rem,4.5vw,2.2rem);color:var(--signal);
-  line-height:1.25;max-width:16ch;
-}
-.rule-close p{color:var(--birch-dim);font-size:.95rem;max-width:52ch}
-.rule-close a{color:var(--birch);font-weight:500}
+    .grid-split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 70px; align-items: start; }
+    .stack-note { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 17px; }
+    .stack-note dt { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .stack-note dd { margin: 5px 0 17px; color: #504b42; font-size: 14px; }
 
-.site-footer{
-  padding:2.5rem 0 3rem;color:var(--birch-dim);font-family:var(--font-mono);
-  font-size:.75rem;border-top:1px solid var(--line);
-}
-</style>
+    .parts { margin-top: 60px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .part { min-height: 260px; padding: 20px 20px 18px; border-top: 1px solid var(--line); background: transparent; display: flex; flex-direction: column; justify-content: space-between; }
+    .part-visual { height: 120px; display: grid; place-items: center; }
+    .part-code { font-size: 10px; letter-spacing: .07em; color: var(--muted); }
+    .part h3 { font-size: 22px; margin: 10px 0 6px; }
+    .part p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.45; }
+
+    .connection { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: center; }
+    .connection-card { border: 0; background: transparent; padding: 0; }
+    .connection-card svg { width: 100%; height: auto; display: block; }
+    .connection-copy { max-width: 47ch; }
+    .connection-copy .large { font-size: clamp(30px, 4vw, 48px); line-height: 1.05; margin-bottom: 24px; }
+    .connection-copy p { color: var(--muted); font-size: 15px; }
+    .connection-list { margin: 30px 0 0; border-top: 1px solid var(--line); }
+    .connection-row { display: grid; grid-template-columns: 60px 1fr; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .connection-row b { font-weight: 500; }
+    .connection-row span { color: var(--muted); }
+
+    .validation { margin-top: 55px; border-top: 1px solid var(--line); }
+    .vrow { display: grid; grid-template-columns: 70px 1fr 1fr; gap: 22px; padding: 20px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+    .vrow.current { background: rgba(143,155,132,.10); padding-left: 16px; padding-right: 16px; }
+    .vtag { font-size: 11px; letter-spacing: .08em; color: var(--sage-deep); }
+    .vclaim { font-size: 18px; }
+    .vnote { font-size: 12px; color: var(--muted); }
+
+    .roadmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 60px; border-top: 1px solid var(--line); }
+    .stage { min-height: 200px; padding: 18px 18px 24px 0; margin-right: 18px; position: relative; }
+    .stage::before { content: ""; position: absolute; top: -4px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--paper); border: 1px solid var(--muted); }
+    .stage.current::before { background: var(--sage); border-color: var(--sage); }
+    .stage:not(:last-child) { border-right: 1px solid var(--line); }
+    .stage-label { font-size: 11px; color: var(--muted); margin-top: 13px; text-transform: uppercase; letter-spacing: .08em; }
+    .stage h3 { font-size: 27px; margin-top: 55px; }
+    .stage p { color: var(--muted); font-size: 12px; max-width: 22ch; margin-bottom: 0; }
+
+    .closing { padding: 145px 0 80px; }
+    .closing-grid { display: grid; grid-template-columns: 1fr .65fr; gap: 70px; align-items: end; }
+    .closing h2 { font-family: var(--serif); font-size: clamp(50px, 7vw, 92px); line-height: .94; max-width: 10ch; }
+    .closing-copy { color: var(--muted); font-size: 14px; max-width: 37ch; }
+    .contact { display: inline-flex; align-items: center; gap: 10px; margin-top: 25px; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; font-size: 13px; }
+    footer { padding: 28px 0 35px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 920px) {
+      .nav a { display: none; }
+      .hero, .grid-split, .connection, .closing-grid { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 80px; }
+      .hero-visual { min-height: 430px; order: 2; }
+      .hero-caption { right: 0; }
+      .section-grid { grid-template-columns: 1fr; gap: 10px; }
+      .section-index { padding-top: 0; }
+      .principles { grid-template-columns: 1fr; }
+      .parts { grid-template-columns: repeat(2, 1fr); }
+      .vrow { grid-template-columns: 50px 1fr; }
+      .vnote { grid-column: 2; }
+      .roadmap { grid-template-columns: 1fr; border-top: 0; }
+      .stage { min-height: 0; padding: 22px 0 30px 22px; border-top: 1px solid var(--line); margin: 0; }
+      .stage:not(:last-child) { border-right: 0; }
+      .stage::before { left: -3px; top: 19px; }
+      .stage h3 { margin-top: 7px; }
+    }
+    @media (max-width: 560px) {
+      .page { width: min(100% - 24px, var(--max)); }
+      .topbar { padding: 17px 0; }
+      .brand-sub { display: none; }
+      .hero { padding: 65px 0 78px; }
+      h1 { font-size: clamp(54px, 16vw, 83px); }
+      .section { padding: 85px 0; }
+      .section--tight { padding: 70px 0; }
+      .parts { grid-template-columns: 1fr; }
+      .vrow { grid-template-columns: 42px 1fr; gap: 14px; }
+      .connection { gap: 38px; }
+      footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-
-  <section class="hero">
-    <span class="status-tag"><span class="dot"></span>System 0.1 &middot; Conceptual / Pre-Engineering</span>
-    <h1>A Parametric Timber Construction Platform</h1>
-    <p class="hypothesis">Can a small kit of CNC-cut timber parts generate real architectural variety, while staying simple enough to build, test, and trust?</p>
-    <p class="meta">Independent R&amp;D &middot; Not a product for sale &middot; No structural claims are made</p>
-    <p class="scroll-cue">Read the system, in order ↓</p>
-  </section>
-
-  <section class="spread">
-    <span class="snum">01 — The Question</span>
-    <h2>Variety without chaos</h2>
-    <p>Standard construction treats almost every building as a one-off. This project asks whether a small family of standardized, CNC-manufactured timber parts can generate real architectural variety — different sizes, roof types, window layouts — while keeping structure, manufacturing, and assembly predictable enough to actually trust.</p>
-    <p>The hypothesis only holds if variety grows faster than complexity: more valid building configurations, without a matching explosion in unique parts or assembly steps. A single beautiful prototype isn't evidence. The evidence has to come from many configurations tested against real fabrication data and structural review.</p>
-  </section>
-
-  <section class="spread">
-    <span class="snum">02 — The Grid</span>
-    <h2>Two grids, not one</h2>
-    <p>A 1,200&nbsp;mm grid places the main structural frame — few enough posts and beams to keep the logic simple. A finer 600&nbsp;mm grid underneath controls where windows, doors, and interior walls can sit. Every dimension in the system is a multiple of one of these two numbers — nothing is drawn freehand.</p>
-    <div class="diagram">
-      <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg">
-        <!-- 600mm sub-grid, dashed -->
-        <g stroke="#45392A" stroke-width="1" stroke-dasharray="4 5">
-          <line x1="80" y1="40" x2="80" y2="200"/>
-          <line x1="140" y1="40" x2="140" y2="200"/>
-          <line x1="260" y1="40" x2="260" y2="200"/>
-          <line x1="320" y1="40" x2="320" y2="200"/>
-          <line x1="440" y1="40" x2="440" y2="200"/>
-          <line x1="500" y1="40" x2="500" y2="200"/>
-          <line x1="80" y1="80" x2="560" y2="80"/>
-          <line x1="80" y1="160" x2="560" y2="160"/>
-        </g>
-        <!-- 1200mm primary grid, solid -->
-        <g stroke="#A79E8C" stroke-width="1.5">
-          <line x1="80" y1="40" x2="80" y2="200"/>
-          <line x1="200" y1="40" x2="200" y2="200"/>
-          <line x1="320" y1="40" x2="320" y2="200"/>
-          <line x1="440" y1="40" x2="440" y2="200"/>
-          <line x1="560" y1="40" x2="560" y2="200"/>
-          <line x1="80" y1="40" x2="560" y2="40"/>
-          <line x1="80" y1="200" x2="560" y2="200"/>
-        </g>
-        <!-- primary nodes -->
-        <g fill="#F5B700">
-          <circle cx="80" cy="40" r="4"/><circle cx="200" cy="40" r="4"/><circle cx="320" cy="40" r="4"/><circle cx="440" cy="40" r="4"/><circle cx="560" cy="40" r="4"/>
-          <circle cx="80" cy="200" r="4"/><circle cx="200" cy="200" r="4"/><circle cx="320" cy="200" r="4"/><circle cx="440" cy="200" r="4"/><circle cx="560" cy="200" r="4"/>
-        </g>
-        <!-- dimension line 1200 -->
-        <g stroke="#EDE6D6" stroke-width="1">
-          <line x1="80" y1="222" x2="200" y2="222"/>
-          <line x1="80" y1="217" x2="80" y2="227"/>
-          <line x1="200" y1="217" x2="200" y2="227"/>
-        </g>
-        <text x="140" y="240" text-anchor="middle" class="part-code">1200 mm</text>
-        <!-- dimension line 600 -->
-        <g stroke="#A79E8C" stroke-width="1">
-          <line x1="200" y1="20" x2="260" y2="20"/>
-          <line x1="200" y1="15" x2="200" y2="25"/>
-          <line x1="260" y1="15" x2="260" y2="25"/>
-        </g>
-        <text x="230" y="12" text-anchor="middle" class="part-label">600 mm</text>
-      </svg>
-    </div>
-    <p class="dim">Height uses a separate 150&nbsp;mm vertical increment, so ceiling height isn't trapped by the plan grid. Changing the width or length of a building regenerates every node, part, and label automatically — nothing is moved by hand.</p>
-  </section>
-
-  <section class="spread">
-    <span class="snum">03 — The Kit</span>
-    <h2>A few part families, not a catalogue</h2>
-    <p>A small number of reusable part types — not hundreds of finished, pre-cut SKUs. A part becomes a specific, orderable component only once its material, length, and connections are resolved for a given building. Everything else stays a flexible rule.</p>
-    <div class="diagram">
-      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- POST-P -->
-        <rect x="30" y="30" width="18" height="120" fill="none" stroke="#EDE6D6" stroke-width="1.5"/>
-        <text x="39" y="168" text-anchor="middle" class="part-code">POST-P</text>
-        <text x="39" y="182" text-anchor="middle" class="part-label">column</text>
-
-        <!-- BEAM-B -->
-        <rect x="100" y="70" width="110" height="16" fill="none" stroke="#EDE6D6" stroke-width="1.5"/>
-        <text x="155" y="168" text-anchor="middle" class="part-code">BEAM-B</text>
-        <text x="155" y="182" text-anchor="middle" class="part-label">span member</text>
-
-        <!-- JOIST-J -->
-        <g stroke="#EDE6D6" stroke-width="1.2" fill="none">
-          <rect x="250" y="60" width="10" height="70"/>
-          <rect x="268" y="60" width="10" height="70"/>
-          <rect x="286" y="60" width="10" height="70"/>
-          <rect x="304" y="60" width="10" height="70"/>
-        </g>
-        <text x="284" y="168" text-anchor="middle" class="part-code">JOIST-J</text>
-        <text x="284" y="182" text-anchor="middle" class="part-label">floor/roof</text>
-
-        <!-- WALL-S -->
-        <g stroke="#EDE6D6" stroke-width="1.2" fill="none">
-          <rect x="350" y="35" width="80" height="100"/>
-          <line x1="350" y1="60" x2="430" y2="60"/>
-          <line x1="350" y1="85" x2="430" y2="85"/>
-          <line x1="350" y1="110" x2="430" y2="110"/>
-        </g>
-        <text x="390" y="168" text-anchor="middle" class="part-code">WALL-S</text>
-        <text x="390" y="182" text-anchor="middle" class="part-label">infill panel</text>
-
-        <!-- ROOF-C -->
-        <path d="M460 135 L500 40 L540 135 Z" fill="none" stroke="#EDE6D6" stroke-width="1.5"/>
-        <text x="500" y="168" text-anchor="middle" class="part-code">ROOF-C</text>
-        <text x="500" y="182" text-anchor="middle" class="part-label">roof cassette</text>
-
-        <!-- CONN-X -->
-        <circle cx="590" cy="85" r="22" fill="none" stroke="#F5B700" stroke-width="1.5"/>
-        <line x1="590" y1="63" x2="590" y2="107" stroke="#F5B700" stroke-width="1"/>
-        <line x1="568" y1="85" x2="612" y2="85" stroke="#F5B700" stroke-width="1"/>
-        <text x="590" y="168" text-anchor="middle" class="part-code">CONN-X</text>
-        <text x="590" y="182" text-anchor="middle" class="part-label">hardware</text>
-      </svg>
-    </div>
-    <p class="dim">Floor, wall, and roof panels attach to a sparse primary frame through defined interface zones and can vary independently — trading a little component minimalism for repairability, façade freedom, and the ability to swap suppliers.</p>
-  </section>
-
-  <section class="spread">
-    <span class="snum">04 — Connections</span>
-    <h2>Bearing carries gravity, hardware carries restraint</h2>
-    <p>The hardest problem in a kit-of-parts system isn't the parts — it's how they meet. The first connection family prioritizes clarity and inspection over hidden, sculptural joinery: gravity is carried by simple bearing, hardware handles restraint, and every joint stays visually checkable after assembly.</p>
-    <p class="dim">Five joint types are currently being defined and tested — from the post-to-beam connection down to the adjustable foundation interface — each validated through repeated assembly trials before it's trusted.</p>
-  </section>
-
-  <section class="spread">
-    <span class="snum">05 — Validation</span>
-    <h2>What can honestly be claimed, right now</h2>
-    <p>No configuration is ever presented as structurally validated until it's actually calculated, tested, and signed off for its jurisdiction. This ladder is public on purpose — it's the honest boundary between what the system currently knows and what still needs an engineer.</p>
-    <div class="ladder">
-      <div class="ladder-row current">
-        <span class="lver">V0</span>
-        <div>
-          <div class="lclaim">Geometrically valid within the grammar</div>
-          <div class="lexcl">No load capacity claim of any kind</div>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="OpenBay home">
+        <span class="brand-mark">openbay</span>
+        <span class="brand-sub" data-i18n="brandSub">timber system 0.1</span>
+      </a>
+      <nav class="nav">
+        <a href="#idea" data-i18n="navIdea">idea</a>
+        <a href="#system" data-i18n="navSystem">system</a>
+        <a href="#making" data-i18n="navMaking">making</a>
+        <a href="#testing" data-i18n="navTesting">testing</a>
+        <a href="#next" data-i18n="navNext">next</a>
+        <div class="lang" aria-label="Language selection">
+          <button type="button" class="active" data-lang="en" aria-pressed="true">EN</button><span class="slash">/</span><button type="button" data-lang="lt" aria-pressed="false">LT</button>
         </div>
-      </div>
-      <div class="ladder-row current">
-        <span class="lver">V1</span>
-        <div>
-          <div class="lclaim">Within a conservative pre-engineering envelope</div>
-          <div class="lexcl">Not a substitute for real calculation — no project certification</div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="reveal">
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span data-i18n="eyebrow">independent R&amp;D · early stage</span></div>
+          <h1 id="hero-title" data-i18n="heroTitle">A timber building system, kept deliberately simple.</h1>
+          <p class="hero-lede" data-i18n="heroLede">A small family of timber parts, cut by CNC, that can become many different small buildings — without turning every project into a custom exercise.</p>
+          <p class="hero-note" data-i18n="heroNote"><strong>System 0.1</strong> · conceptual / pre-engineering · no structural claims yet</p>
         </div>
-      </div>
-      <div class="ladder-row">
-        <span class="lver">V2</span>
-        <div>
-          <div class="lclaim">Calculated for stated loads, materials, and code</div>
-          <div class="lexcl">Only covers the specific jurisdiction and details checked</div>
+        <div class="hero-visual reveal" aria-hidden="true">
+          <div class="hero-frame">
+            <div class="line-art">
+            <svg viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M116 428V238L294 144L472 238V428"/>
+                <path d="M116 238L294 335L472 238"/>
+                <path d="M116 428L294 524L472 428"/>
+                <path d="M205 192V476M383 192V476"/>
+                <path d="M294 144V335M294 335V524"/>
+                <path d="M116 428H472"/>
+                <path d="M80 450L294 566L508 450" stroke-dasharray="1 9"/>
+                <path d="M155 226L294 152L433 226"/>
+                <path d="M145 238V188L294 106L443 188V238"/>
+                <path d="M145 188L294 269L443 188" stroke-dasharray="8 8"/>
+              </g>
+              <g stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+                <path d="M132 408V268M165 390V250M198 372V232M231 354V214" opacity=".55"/>
+                <path d="M389 372L456 336M422 390L489 354" opacity=".55"/>
+              </g>
+            </svg>
+            </div>
+            <div class="hero-caption" data-i18n="heroCaption">The architecture is allowed to change. The interfaces underneath it stay calm.</div>
+          </div>
         </div>
-      </div>
-      <div class="ladder-row">
-        <span class="lver">V3</span>
-        <div>
-          <div class="lclaim">Traceable to verified models and physical tests</div>
-          <div class="lexcl">No extrapolation outside the validated design domain</div>
+      </section>
+
+      <section class="section" id="idea">
+        <div class="section-grid">
+          <div class="section-index">01 / <span data-i18n="indexIdea">the idea</span></div>
+          <div>
+            <h2 class="section-title reveal" data-i18n="ideaTitle">Standardise the <span class="accent">quiet</span> parts.</h2>
+            <p class="lead reveal" data-i18n="ideaLead">The aim is not to make every building look the same. It is to make the things behind the look behave in a predictable way.</p>
+            <p class="copy reveal" data-i18n="ideaP1">The current research is built around a frame-and-cartridge approach: a sparse timber frame carries the main structure, while floor, wall and roof elements can change independently. That separation is useful for repair, façade choices, services and future suppliers.</p>
+            <p class="copy reveal" data-i18n="ideaP2">The test is bigger than one prototype. The system only becomes convincing when many valid buildings can be generated without a matching explosion in unique parts, CNC setups or assembly steps.</p>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+        <div class="principles reveal">
+          <article class="principle"><div class="principle-no">01</div><h3 data-i18n="principle1Title">same rules</h3><p data-i18n="principle1Body">Grid, interfaces and part families stay stable while the building changes.</p></article>
+          <article class="principle"><div class="principle-no">02</div><h3 data-i18n="principle2Title">different buildings</h3><p data-i18n="principle2Body">Width, openings, roof type and envelope can vary within a defined design space.</p></article>
+          <article class="principle"><div class="principle-no">03</div><h3 data-i18n="principle3Title">evidence, not renders</h3><p data-i18n="principle3Body">Fabrication logs, assembly trials and engineering checks matter more than a convincing image.</p></article>
+        </div>
+      </section>
 
-  <section class="spread">
-    <span class="snum">06 — Roadmap</span>
-    <h2>Where this actually stands</h2>
-    <p>Progress is measured in stage gates, not renderings. Each gate has to pass before the next one starts.</p>
-    <div class="roadmap">
-      <div class="rline">
-        <span class="rmarker done" style="left:6%"></span>
-        <span class="rmarker current" style="left:30%"></span>
-        <span class="rmarker" style="left:54%"></span>
-        <span class="rmarker" style="left:78%"></span>
-        <span class="rmarker" style="left:96%"></span>
-      </div>
-      <div class="rlabels">
-        <span>Geometry</span>
-        <span class="current">Construction system</span>
-        <span>Physical prototype</span>
-        <span>Structural validation</span>
-        <span>Configurator</span>
-      </div>
-    </div>
-    <p class="dim">Currently building the digital model and testing the first physical connections — before scaling up to a full test shell.</p>
-  </section>
+      <section class="section" id="system">
+        <div class="section-grid">
+          <div class="section-index">02 / <span data-i18n="indexSystem">the system</span></div>
+          <div>
+            <h2 class="section-title reveal" data-i18n="systemTitle">Two grids. One simple idea.</h2>
+            <div class="grid-split">
+              <div>
+                <p class="lead reveal" data-i18n="systemLead">A 1,200 mm coordination grid sets the main frame. A 600 mm sub-grid gives the smaller moves room to happen.</p>
+                <p class="copy reveal" data-i18n="systemP1">Main posts are only activated where span, stability and opening rules allow. Wall openings, secondary members and infill follow the finer grid. Overall dimensions are derived from the module count rather than drawn freehand.</p>
+                <p class="copy reveal" data-i18n="systemP2">Height uses a separate 150 mm step. Change the width or length and the nodes, parts, IDs and bill of materials regenerate from the same underlying rules.</p>
+              </div>
+              <dl class="stack-note reveal">
+                <dt data-i18n="gridMeta1">coordination</dt><dd data-i18n="gridMeta1v">1,200 mm primary grid</dd>
+                <dt data-i18n="gridMeta2">fine planning</dt><dd data-i18n="gridMeta2v">600 mm sub-grid</dd>
+                <dt data-i18n="gridMeta3">height</dt><dd data-i18n="gridMeta3v">150 mm vertical step</dd>
+                <dt data-i18n="gridMeta4">initial roof types</dt><dd data-i18n="gridMeta4v">flat / mono-pitch / gable</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="system-visual reveal">
+          <div class="line-art">
+          <svg viewBox="0 0 1180 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <!-- primary frame -->
+              <g stroke-width="2.6">
+                <path d="M245 356V188L420 96L595 188V356"/>
+                <path d="M245 188L420 284L595 188"/>
+                <path d="M245 356L420 452L595 356"/>
+                <path d="M332 142V404M507 142V404"/>
+                <path d="M420 96V284M420 284V452"/>
+              </g>
+              <!-- floor cassette -->
+              <g stroke-width="1.9">
+                <path d="M205 390L420 507L635 390L420 273Z"/>
+                <path d="M237 372L420 471L603 372"/>
+                <path d="M270 354L420 435L570 354"/>
+                <path d="M302 336L420 400L538 336"/>
+              </g>
+              <!-- wall cartridges, slightly offset -->
+              <g stroke-width="1.7">
+                <path d="M178 173L349 82V214L178 305Z"/>
+                <path d="M192 175L341 96"/>
+                <path d="M192 200L341 121"/>
+                <path d="M192 225L341 146"/>
+                <path d="M662 171L491 80V212L662 303Z"/>
+                <path d="M648 173L499 94"/>
+                <path d="M648 198L499 119"/>
+                <path d="M648 223L499 144"/>
+              </g>
+              <!-- roof -->
+              <g stroke-width="2.2">
+                <path d="M190 86L420 -24L650 86L420 209Z"/>
+                <path d="M235 80L420 -8L605 80"/>
+                <path d="M280 74L420 8L560 74"/>
+              </g>
+              <!-- alignment / movement -->
+              <g stroke-width="1.2" stroke-dasharray="4 8" opacity=".5">
+                <path d="M178 305V173M662 303V171M205 390V253M635 390V253"/>
+                <path d="M190 86L160 58M650 86L680 58M205 390L172 408M635 390L668 408"/>
+              </g>
+            </g>
+          </svg>
+          </div>
+          <div class="visual-caption"><span data-i18n="visualCaption1">frame + replaceable infill</span><span data-i18n="visualCaption2">the visible architecture stays flexible</span></div>
+        </div>
+      </section>
 
-  <section class="rule-close">
-    <span class="tag">One-sentence system rule</span>
-    <blockquote>Standardize interfaces and data more aggressively than visible architecture.</blockquote>
-    <p>This is a research document, not a finished product. If you want to follow along, ask a question, or talk about connection testing and fabrication partners, get in touch: <a href="mailto:you@example.com">you@example.com</a></p>
-  </section>
+      <section class="section" id="making">
+        <div class="section-grid">
+          <div class="section-index">03 / <span data-i18n="indexMaking">the parts</span></div>
+          <div>
+            <h2 class="section-title reveal" data-i18n="partsTitle">A small vocabulary.</h2>
+            <p class="lead reveal" data-i18n="partsLead">The library is intentionally made of families, not a huge catalogue of finished products.</p>
+            <p class="copy reveal" data-i18n="partsP">A part becomes a specific component only when its material, length, machining and connection are resolved for a real configuration. Until then, the system keeps the definition flexible.</p>
+          </div>
+        </div>
+        <div class="parts reveal">
+          <article class="part"><div class="part-visual line-art"><svg viewBox="0 0 120 120"><g stroke="currentColor" fill="none" stroke-linejoin="round"><path d="M38 30L60 18L82 30V102L60 114L38 102Z" stroke-width="2"/><path d="M60 18V114M38 30L60 42L82 30" stroke-width="1.5"/></g></svg></div><div><div class="part-code">POST-P</div><h3 data-i18n="part1">post</h3><p data-i18n="part1p">main vertical timber member</p></div></article>
+          <article class="part"><div class="part-visual line-art"><svg viewBox="0 0 140 120"><g stroke="currentColor" fill="none" stroke-linejoin="round"><path d="M16 58L88 20L124 38L52 76Z" stroke-width="2"/><path d="M16 58V74L88 112L124 94V38" stroke-width="2"/><path d="M52 76V92L124 54" stroke-width="1.4"/></g></svg></div><div><div class="part-code">BEAM-B</div><h3 data-i18n="part2">beam</h3><p data-i18n="part2p">main horizontal member</p></div></article>
+          <article class="part"><div class="part-visual line-art"><svg viewBox="0 0 120 120"><g stroke="currentColor" fill="none" stroke-linejoin="round"><path d="M22 42L60 22L98 42V94L60 114L22 94Z" stroke-width="2"/><path d="M22 42L60 62L98 42M60 62V114" stroke-width="1.5"/><path d="M35 48V87M48 55V94M72 55V94M85 48V87" stroke-width="1"/></g></svg></div><div><div class="part-code">FLOOR-C</div><h3 data-i18n="part3">cassette</h3><p data-i18n="part3p">floor, wall or roof infill family</p></div></article>
+          <article class="part"><div class="part-visual line-art"><svg viewBox="0 0 120 120"><g stroke="currentColor" fill="none" stroke-linejoin="round"><path d="M20 42L60 20L100 42V100L60 120L20 100Z" stroke-width="2"/><path d="M40 52L60 42L80 52V80L60 90L40 80Z" stroke-width="2"/><path d="M60 42V90M20 42L60 64L100 42" stroke-width="1.2"/></g></svg></div><div><div class="part-code">WALL-O</div><h3 data-i18n="part4">opening</h3><p data-i18n="part4p">typed door or window condition</p></div></article>
+          <article class="part"><div class="part-visual line-art"><svg viewBox="0 0 120 120"><g stroke="currentColor" fill="none" stroke-linejoin="round"><path d="M60 18L98 39V81L60 102L22 81V39Z" stroke-width="2"/><path d="M60 18V102M22 39L60 60L98 39M22 81L60 60L98 81" stroke-width="1.6"/><circle cx="60" cy="60" r="6" stroke-width="1.6"/></g></svg></div><div><div class="part-code">CONN-X</div><h3 data-i18n="part5">connection</h3><p data-i18n="part5p">standard restraint hardware family</p></div></article>
+        </div>
+      </section>
 
-  <footer class="site-footer">
-    System Definition 0.1 &middot; Updated 2026 &middot; Independent R&amp;D
-  </footer>
+      <section class="section" id="making-detail">
+        <div class="section-grid">
+          <div class="section-index">04 / <span data-i18n="indexConnection">the join</span></div>
+          <div class="connection">
+            <div class="connection-card reveal">
+              <div class="line-art">
+              <svg viewBox="0 0 540 430" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <g stroke-width="3">
+                    <path d="M138 333V112L286 34V255Z"/>
+                    <path d="M286 34L420 106V327L286 255"/>
+                    <path d="M138 333L286 255L420 327"/>
+                  </g>
+                  <g stroke-width="2.4">
+                    <path d="M238 127L384 50L384 170L238 247Z"/>
+                    <path d="M238 127L384 205"/>
+                    <path d="M274 108V224M312 88V204M350 68V185" stroke-width="1.1"/>
+                  </g>
+                  <g stroke-width="1.4" opacity=".7">
+                    <path d="M286 255V293M420 327V365M138 333V371" stroke-dasharray="4 7"/>
+                    <path d="M286 74L465 170M286 106L465 202" stroke-dasharray="2 9"/>
+                  </g>
+                  <g stroke-width="2">
+                    <circle cx="326" cy="182" r="7"/>
+                    <path d="M319 182H333M326 175V189"/>
+                    <path d="M326 196L388 229"/>
+                    <path d="M326 209L388 242"/>
+                  </g>
+                </g>
+              </svg>
+              </div>
+            </div>
+            <div class="connection-copy reveal">
+              <div class="large" data-i18n="joinTitle">The join is where the system earns its keep.</div>
+              <p data-i18n="joinP1">The first connection family is intentionally plain: let bearing do the obvious work, use mechanical restraint where movement must be controlled, and keep the joint visible enough to inspect.</p>
+              <p data-i18n="joinP2">Five connection types are being developed from the post–beam node through to the foundation interface. Repeated assembly comes before confidence; load testing comes before any structural claim.</p>
+              <div class="connection-list">
+                <div class="connection-row"><b>J01</b><span data-i18n="j01">post / beam</span></div>
+                <div class="connection-row"><b>J02</b><span data-i18n="j02">beam / joist</span></div>
+                <div class="connection-row"><b>J03</b><span data-i18n="j03">cartridge / frame</span></div>
+                <div class="connection-row"><b>J04</b><span data-i18n="j04">cartridge seam</span></div>
+                <div class="connection-row"><b>J05</b><span data-i18n="j05">base / foundation</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-</div>
+      <section class="section" id="testing">
+        <div class="section-grid">
+          <div class="section-index">05 / <span data-i18n="indexTesting">testing</span></div>
+          <div>
+            <h2 class="section-title reveal" data-i18n="testingTitle">Say what is known. Leave room for what isn't.</h2>
+            <p class="lead reveal" data-i18n="testingLead">The public status stays deliberately boring: a configuration is only called validated when the right calculations, tests and approvals exist.</p>
+            <p class="copy reveal" data-i18n="testingP">The current work sits at the geometry and early construction-system stages. It is enough to explore rules and make physical test pieces; it is not enough to make project-level structural promises.</p>
+          </div>
+        </div>
+        <div class="validation reveal">
+          <div class="vrow current"><div class="vtag">V0</div><div class="vclaim" data-i18n="v0">geometry works</div><div class="vnote" data-i18n="v0n">topology, collisions, support continuity and part bounds</div></div>
+          <div class="vrow current"><div class="vtag">V1</div><div class="vclaim" data-i18n="v1">early rules</div><div class="vnote" data-i18n="v1n">conservative envelope, stability zones, openings and handling limits</div></div>
+          <div class="vrow"><div class="vtag">V2</div><div class="vclaim" data-i18n="v2">engineering</div><div class="vnote" data-i18n="v2n">loads, members, connections, foundations, fire and durability for a stated scope</div></div>
+          <div class="vrow"><div class="vtag">V3</div><div class="vclaim" data-i18n="v3">validated automation</div><div class="vnote" data-i18n="v3n">verified models, regression tests, physical tests and approval workflow</div></div>
+        </div>
+      </section>
+
+      <section class="section" id="next">
+        <div class="section-grid">
+          <div class="section-index">06 / <span data-i18n="indexNext">what next</span></div>
+          <div>
+            <h2 class="section-title reveal" data-i18n="nextTitle">Build the boring bits first.</h2>
+            <p class="lead reveal" data-i18n="nextLead">The next useful step is not a configurator. It is proving that the same parts, records and rules survive contact with a workshop and a small test build.</p>
+          </div>
+        </div>
+        <div class="roadmap reveal">
+          <article class="stage done"><div class="stage-label">V0</div><h3 data-i18n="stage1">geometry</h3><p data-i18n="stage1p">module logic, topology and validity checks</p></article>
+          <article class="stage current"><div class="stage-label">V1</div><h3 data-i18n="stage2">construction</h3><p data-i18n="stage2p">part families, connections and assembly graph</p></article>
+          <article class="stage"><div class="stage-label">V2</div><h3 data-i18n="stage3">prototype</h3><p data-i18n="stage3p">connection rig, then a small weather-tight shell</p></article>
+          <article class="stage"><div class="stage-label">V3</div><h3 data-i18n="stage4">validation</h3><p data-i18n="stage4p">engineering calculations and physical tests</p></article>
+          <article class="stage"><div class="stage-label">V4+</div><h3 data-i18n="stage5">configurator</h3><p data-i18n="stage5p">only the choices the validated system can actually support</p></article>
+        </div>
+      </section>
+
+      <section class="closing">
+        <div class="closing-grid">
+          <div class="reveal">
+            <h2 data-i18n="closingTitle">Let the building change. Keep the system steady.</h2>
+          </div>
+          <div class="reveal">
+            <p class="closing-copy" data-i18n="closingCopy">OpenBay 0.1 is an independent R&amp;D baseline for a modular, prefabricated, CNC-manufactured timber kit of parts. The definition is conceptual / pre-engineering and does not replace project-specific engineering or approval.</p>
+            <a class="contact" href="mailto:you@example.com" data-i18n="contact">talk about the project ↗</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span data-i18n="footerLeft">openbay / timber system 0.1</span>
+      <span data-i18n="footerRight">independent R&amp;D · updated 2026</span>
+    </footer>
+  </div>
+
+<script>
+const translations = {
+  en: {
+    brandSub:'timber system 0.1', navIdea:'idea', navSystem:'system', navMaking:'making', navTesting:'testing', navNext:'next',
+    eyebrow:'independent R&D · early stage', heroTitle:'A timber building system, kept deliberately simple.',
+    heroLede:'A small family of timber parts, cut by CNC, that can become many different small buildings — without turning every project into a custom exercise.',
+    heroNote:'<strong>System 0.1</strong> · conceptual / pre-engineering · no structural claims yet',
+    heroCaption:'The architecture is allowed to change. The interfaces underneath it stay calm.',
+    indexIdea:'the idea', ideaTitle:'Standardise the <span class="accent">quiet</span> parts.', ideaLead:'The aim is not to make every building look the same. It is to make the things behind the look behave in a predictable way.',
+    ideaP1:'The current research is built around a frame-and-cartridge approach: a sparse timber frame carries the main structure, while floor, wall and roof elements can change independently. That separation is useful for repair, façade choices, services and future suppliers.',
+    ideaP2:'The test is bigger than one prototype. The system only becomes convincing when many valid buildings can be generated without a matching explosion in unique parts, CNC setups or assembly steps.',
+    principle1Title:'same rules', principle1Body:'Grid, interfaces and part families stay stable while the building changes.',
+    principle2Title:'different buildings', principle2Body:'Width, openings, roof type and envelope can vary within a defined design space.',
+    principle3Title:'evidence, not renders', principle3Body:'Fabrication logs, assembly trials and engineering checks matter more than a convincing image.',
+    indexSystem:'the system', systemTitle:'Two grids. One simple idea.', systemLead:'A 1,200 mm coordination grid sets the main frame. A 600 mm sub-grid gives the smaller moves room to happen.',
+    systemP1:'Main posts are only activated where span, stability and opening rules allow. Wall openings, secondary members and infill follow the finer grid. Overall dimensions are derived from the module count rather than drawn freehand.',
+    systemP2:'Height uses a separate 150 mm step. Change the width or length and the nodes, parts, IDs and bill of materials regenerate from the same underlying rules.',
+    gridMeta1:'coordination', gridMeta1v:'1,200 mm primary grid', gridMeta2:'fine planning', gridMeta2v:'600 mm sub-grid', gridMeta3:'height', gridMeta3v:'150 mm vertical step', gridMeta4:'initial roof types', gridMeta4v:'flat / mono-pitch / gable',
+    visualCaption1:'frame + replaceable infill', visualCaption2:'the visible architecture stays flexible',
+    indexMaking:'the parts', partsTitle:'A small vocabulary.', partsLead:'The library is intentionally made of families, not a huge catalogue of finished products.',
+    partsP:'A part becomes a specific component only when its material, length, machining and connection are resolved for a real configuration. Until then, the system keeps the definition flexible.',
+    part1:'post', part1p:'main vertical timber member', part2:'beam', part2p:'main horizontal member', part3:'cassette', part3p:'floor, wall or roof infill family', part4:'opening', part4p:'typed door or window condition', part5:'connection', part5p:'standard restraint hardware family',
+    indexConnection:'the join', joinTitle:'The join is where the system earns its keep.', joinP1:'The first connection family is intentionally plain: let bearing do the obvious work, use mechanical restraint where movement must be controlled, and keep the joint visible enough to inspect.',
+    joinP2:'Five connection types are being developed from the post–beam node through to the foundation interface. Repeated assembly comes before confidence; load testing comes before any structural claim.',
+    j01:'post / beam', j02:'beam / joist', j03:'cartridge / frame', j04:'cartridge seam', j05:'base / foundation',
+    indexTesting:'testing', testingTitle:'Say what is known. Leave room for what isn’t.', testingLead:'The public status stays deliberately boring: a configuration is only called validated when the right calculations, tests and approvals exist.',
+    testingP:'The current work sits at the geometry and early construction-system stages. It is enough to explore rules and make physical test pieces; it is not enough to make project-level structural promises.',
+    v0:'geometry works', v0n:'topology, collisions, support continuity and part bounds', v1:'early rules', v1n:'conservative envelope, stability zones, openings and handling limits', v2:'engineering', v2n:'loads, members, connections, foundations, fire and durability for a stated scope', v3:'validated automation', v3n:'verified models, regression tests, physical tests and approval workflow',
+    indexNext:'what next', nextTitle:'Build the boring bits first.', nextLead:'The next useful step is not a configurator. It is proving that the same parts, records and rules survive contact with a workshop and a small test build.',
+    stage1:'geometry', stage1p:'module logic, topology and validity checks', stage2:'construction', stage2p:'part families, connections and assembly graph', stage3:'prototype', stage3p:'connection rig, then a small weather-tight shell', stage4:'validation', stage4p:'engineering calculations and physical tests', stage5:'configurator', stage5p:'only the choices the validated system can actually support',
+    closingTitle:'Let the building change. Keep the system steady.', closingCopy:'OpenBay 0.1 is an independent R&D baseline for a modular, prefabricated, CNC-manufactured timber kit of parts. The definition is conceptual / pre-engineering and does not replace project-specific engineering or approval.', contact:'talk about the project ↗',
+    footerLeft:'openbay / timber system 0.1', footerRight:'independent R&D · updated 2026'
+  },
+  lt: {
+    brandSub:'medinė sistema 0.1', navIdea:'idėja', navSystem:'sistema', navMaking:'gamyba', navTesting:'patikra', navNext:'toliau',
+    eyebrow:'nepriklausomi tyrimai · ankstyvas etapas', heroTitle:'Medinių pastatų sistema, sąmoningai palikta paprasta.',
+    heroLede:'Nedidelė CNC būdu apdirbamų medinių detalių šeima, iš kurios galima sudėti skirtingus mažus pastatus — nepradedant kiekvieno projekto nuo nulio.',
+    heroNote:'<strong>Sistema 0.1</strong> · koncepcija / ankstyvas projektavimas · konstrukciniai teiginiai kol kas neteikiami',
+    heroCaption:'Pastatas gali keistis. Jo jungimo logika po apačia lieka rami ir nuosekli.',
+    indexIdea:'idėja', ideaTitle:'Standartizuoti <span class="accent">nematomus</span> dalykus.', ideaLead:'Tikslas nėra sukurti pastatų, kurie visi atrodytų vienodai. Tikslas — kad tai, kas slypi po architektūra, veiktų nuspėjamai.',
+    ideaP1:'Tyrimo pagrindas — karkaso ir keičiamų užpildų principas: pagrindinę konstrukciją laiko retas medinis karkasas, o grindų, sienų ir stogo elementai gali keistis atskirai. Toks atskyrimas palieka daugiau laisvės remontui, fasadui, inžinerinėms sistemoms ir būsimiems tiekėjams.',
+    ideaP2:'Tikrasis testas — ne vienas gražus prototipas. Sistema turi įrodyti, kad iš tų pačių taisyklių galima sugeneruoti daug skirtingų ir tinkamų pastatų, nepadauginant detalių, CNC operacijų ir surinkimo žingsnių.',
+    principle1Title:'tos pačios taisyklės', principle1Body:'Tinklelis, jungimo vietos ir detalių šeimos išlieka stabilios, nors pastatas keičiasi.',
+    principle2Title:'skirtingi pastatai', principle2Body:'Plotis, angos, stogas ir apvalkalas gali keistis apibrėžtose projektavimo ribose.',
+    principle3Title:'įrodymai, ne vizualizacijos', principle3Body:'Gamybos duomenys, surinkimo bandymai ir konstrukcinė patikra svarbesni už gražų vaizdą.',
+    indexSystem:'sistema', systemTitle:'Du tinkleliai. Viena paprasta logika.', systemLead:'1 200 mm modulis nusako pagrindinį karkasą. 600 mm antrinis tinklelis leidžia tiksliau išdėstyti tai, kas mažesniu masteliu.',
+    systemP1:'Pagrindinės kolonos aktyvuojamos ten, kur tai leidžia tarpatramių, stabilumo ir angų taisyklės. Langai, durys, antriniai elementai ir užpildai laikosi smulkesnio tinklelio. Bendri matmenys gaunami iš modulių skaičiaus, o ne piešiami „iš akies“.',
+    systemP2:'Aukštis turi atskirą 150 mm žingsnį. Pakeitus pastato plotį ar ilgį, mazgai, detalės, jų ID ir medžiagų sąrašas persigeneruoja iš tų pačių taisyklių.',
+    gridMeta1:'pagrindinis modulis', gridMeta1v:'1 200 mm', gridMeta2:'smulkus tinklelis', gridMeta2v:'600 mm', gridMeta3:'aukštis', gridMeta3v:'150 mm žingsnis', gridMeta4:'stogo pradinis variantų rinkinys', gridMeta4v:'plokščias / vienšlaitis / dvišlaitis',
+    visualCaption1:'karkasas + keičiami užpildai', visualCaption2:'architektūrai paliekama daugiau laisvės',
+    indexMaking:'detalės', partsTitle:'Nedidelis žodynas.', partsLead:'Sistemoje sąmoningai kuriamos detalių šeimos, o ne šimtai galutinių gaminių.',
+    partsP:'Konkrečia detale elementas tampa tik tada, kai konkrečiam pastatui nustatoma medžiaga, ilgis, apdirbimas ir jungtis. Iki tol jis lieka lanksčios sistemos dalimi.',
+    part1:'kolona', part1p:'pagrindinis vertikalus medinis elementas', part2:'sija', part2p:'pagrindinis horizontalus elementas', part3:'kasetė', part3p:'grindų, sienos arba stogo užpildo šeima', part4:'anga', part4p:'apibrėžtas lango arba durų sprendinys', part5:'jungtis', part5p:'standartinė tvirtinimo elementų šeima',
+    indexConnection:'jungtis', joinTitle:'Būtent jungtyje sistema parodo, ar ji veikia.', joinP1:'Pirmosios jungtys sąmoningai paprastos: apkrovą, kurią gali perimti atrama, perduoda atrama, o mechaninis tvirtinimas kontroliuoja judėjimą ten, kur jo negali būti. Mazgas turi likti matomas tiek, kad jį būtų galima patikrinti.',
+    joinP2:'Kuriamos penkios pagrindinės jungtys — nuo kolonos ir sijos mazgo iki jungties su pamatu. Pirmiausia kartojamas surinkimas; tik po to kalbama apie apkrovų bandymus ir konstrukcinius teiginius.',
+    j01:'kolona / sija', j02:'sija / gegnė ar sija', j03:'kasetė / karkasas', j04:'kasečių sandūra', j05:'padas / pamatas',
+    indexTesting:'patikra', testingTitle:'Sakome tai, ką žinome. Likusią vietą paliekame tam, ko dar nežinome.', testingLead:'Projekto būseną sąmoningai rodome ramiai: konfigūracija vadinama patikrinta tik tada, kai yra reikiami skaičiavimai, bandymai ir patvirtinimai.',
+    testingP:'Šiuo metu dirbama ties geometrija ir ankstyva statybos sistemos versija. To pakanka taisyklėms išbandyti ir pagaminti pirmąsias fizines detales, bet nepakanka žadėti projekto lygio konstrukcinį saugumą.',
+    v0:'geometrija veikia', v0n:'topologija, susidūrimai, atramų tęstinumas ir detalių ribos', v1:'ankstyvosios taisyklės', v1n:'konservatyvios ribos, stabilumo zonos, angos ir kėlimo / svorio ribos', v2:'konstrukciniai skaičiavimai', v2n:'apkrovos, elementai, jungtys, pamatai, gaisras ir ilgaamžiškumas apibrėžtoje srityje', v3:'patikrinta automatika', v3n:'patikrinti modeliai, regresiniai testai, fiziniai bandymai ir patvirtinimo eiga',
+    indexNext:'toliau', nextTitle:'Pirmiausia padaryti tai, kas nuobodu.', nextLead:'Kitas naudingas žingsnis nėra konfigūratorius. Pirmiausia reikia įrodyti, kad tos pačios detalės, jų duomenys ir taisyklės veikia dirbtuvėse ir mažame bandomajame statinyje.',
+    stage1:'geometrija', stage1p:'modulių logika, topologija ir validavimo taisyklės', stage2:'sistema', stage2p:'detalių šeimos, jungtys ir surinkimo seka', stage3:'prototipas', stage3p:'jungčių stendas, tada mažas sandarus bandomasis tūris', stage4:'patikra', stage4p:'konstrukciniai skaičiavimai ir fiziniai bandymai', stage5:'konfigūratorius', stage5p:'tik tie pasirinkimai, kuriuos patikrinta sistema iš tiesų gali palaikyti',
+    closingTitle:'Tegul pastatas keičiasi. Sistema tegul išlieka stabili.', closingCopy:'OpenBay 0.1 — nepriklausomų tyrimų bazė modulinei, surenkamai ir CNC būdu gaminamai medinių detalių sistemai. Tai koncepcinis, ankstyvo projektavimo lygio apibrėžimas; jis nepakeičia konkretaus projekto konstrukcinių skaičiavimų ir leidimų.', contact:'pasikalbėkime apie projektą ↗',
+    footerLeft:'openbay / medinė sistema 0.1', footerRight:'nepriklausomi tyrimai · atnaujinta 2026'
+  }
+};
+const titles = { en:'OpenBay — a timber building system', lt:'OpenBay — medinių pastatų sistema' };
+const descriptions = { en:'A calm, modular timber building system in development — based on a small family of CNC-made parts, clear interfaces and tested rules.', lt:'Rami, modulinė medinių pastatų sistema — paremta nedidele CNC būdu gaminamų detalių šeima, aiškiomis jungtimis ir testuojamomis taisyklėmis.' };
+function setLanguage(lang){
+  const dict = translations[lang] || translations.en;
+  document.documentElement.lang = lang;
+  document.title = titles[lang] || titles.en;
+  document.getElementById('meta-description').content = descriptions[lang] || descriptions.en;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.querySelectorAll('[data-lang]').forEach(btn=>{
+    const active = btn.dataset.lang === lang;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
+  try{ localStorage.setItem('openbay-language', lang); }catch(e){}
+}
+document.querySelectorAll('[data-lang]').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.lang)));
+let initial='en';
+try{ const saved=localStorage.getItem('openbay-language'); if(saved==='lt'||saved==='en') initial=saved; }catch(e){}
+setLanguage(initial);
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('in'); observer.unobserve(entry.target); } });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
 </body>
 </html>
